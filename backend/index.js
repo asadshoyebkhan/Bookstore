@@ -63,6 +63,23 @@ app.post('/books', async (req, res) =>{
         res.status(500).json({message: "Server Error"});
     }
 
+});
+
+app.put('/books/:id', async(req, res)=>{
+    try {
+        const updatedBook = await Book.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            {new: true, runValidators: true}
+        )
+
+        res.status(200).json(updatedBook);
+    } catch (error) {
+        res.status(500).json({
+            status: 500,
+            message: "Error updating book with id "+req.params.id
+        })
+    }
 })
 
 connectDB(app);
