@@ -12,6 +12,34 @@ app.get('/', (req, res) => {
     res.status(200).send("<H1> Hello World </H1>");
 });
 
+app.get('/books', async(req, res)=>{
+    try{
+        const books = await Book.find();
+        res.status(200).json({
+            RecordCount: books.length,
+            data:books
+        });
+    }catch(err){
+        console.log(err);
+        res.status(500).json({message: "Server Error"});
+    }
+});
+
+app.get('/books/:id', async(req, res)=>{
+    try {
+        const bookWithId = await Book.findById(req.params.id);
+        if(!bookWithId){
+            res.status(404).json({
+                message: "Book with id "+req.params.id+" not found"
+            })
+        }else{
+            res.status(200).json(bookWithId);
+        }
+    } catch (error) {
+        res.status(500).json({message: "Error finding book with id "+req.params.id});
+    }
+});
+
 
 app.post('/books', async (req, res) =>{
     try{
