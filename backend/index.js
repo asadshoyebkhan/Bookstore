@@ -80,6 +80,31 @@ app.put('/books/:id', async(req, res)=>{
             message: "Error updating book with id "+req.params.id
         })
     }
+});
+
+
+app.delete('/books/:id', async(req, res) => {
+    try {
+        const deletedBook = await Book.findByIdAndDelete(
+            req.params.id
+        );
+        
+        if(!deletedBook){
+            res.status(404).json({
+                message: "Book with id "+req.params.id+" not found"
+            })
+        }else{
+            res.status(200).json({
+                message: "Book with id "+req.params.id+" deleted successfully",
+                body: deletedBook
+            })
+        }
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Error deleting book with id "+req.params.id
+        })
+    }
 })
 
 connectDB(app);
