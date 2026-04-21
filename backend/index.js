@@ -1,7 +1,7 @@
 import 'dotenv/config'
 import express from 'express';
 import connectDB from './config/db.js';
-import {Book} from './models/BookModel.js';
+import { Book } from './models/BookModel.js';
 import cors from 'cors';
 
 
@@ -19,42 +19,42 @@ app.get('/', (req, res) => {
     res.status(200).send("<H1> Hello World </H1>");
 });
 
-app.get('/books', async(req, res)=>{
-    try{
+app.get('/books', async (req, res) => {
+    try {
         const books = await Book.find();
         res.status(200).json({
             RecordCount: books.length,
-            data:books
+            data: books
         });
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        res.status(500).json({message: "Server Error"});
+        res.status(500).json({ message: "Server Error" });
     }
 });
 
-app.get('/books/:id', async(req, res)=>{
+app.get('/books/:id', async (req, res) => {
     try {
         const bookWithId = await Book.findById(req.params.id);
-        if(!bookWithId){
+        if (!bookWithId) {
             res.status(404).json({
-                message: "Book with id "+req.params.id+" not found"
+                message: "Book with id " + req.params.id + " not found"
             })
-        }else{
+        } else {
             res.status(200).json(bookWithId);
         }
     } catch (error) {
-        res.status(500).json({message: "Error finding book with id "+req.params.id});
+        res.status(500).json({ message: "Error finding book with id " + req.params.id });
     }
 });
 
 
-app.post('/books', async (req, res) =>{
-    try{
+app.post('/books', async (req, res) => {
+    try {
         console.log(req.body);
 
-        const {title, author, publishYear} = req.body;
-        if(!title || !author || !publishYear){
-            return res.status(400).json({message: "Please provide all the required fields"});
+        const { title, author, publishYear } = req.body;
+        if (!title || !author || !publishYear) {
+            return res.status(400).json({ message: "Please provide all the required fields" });
         }
 
         const newBook = await Book.create({
@@ -65,51 +65,51 @@ app.post('/books', async (req, res) =>{
 
         res.status(201).json(newBook);
 
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        res.status(500).json({message: "Server Error"});
+        res.status(500).json({ message: "Server Error" });
     }
 
 });
 
-app.put('/books/:id', async(req, res)=>{
+app.put('/books/:id', async (req, res) => {
     try {
         const updatedBook = await Book.findByIdAndUpdate(
             req.params.id,
             req.body,
-            {new: true, runValidators: true}
+            { new: true, runValidators: true }
         )
 
         res.status(200).json(updatedBook);
     } catch (error) {
         res.status(500).json({
             status: 500,
-            message: "Error updating book with id "+req.params.id
+            message: "Error updating book with id " + req.params.id
         })
     }
 });
 
 
-app.delete('/books/:id', async(req, res) => {
+app.delete('/books/:id', async (req, res) => {
     try {
         const deletedBook = await Book.findByIdAndDelete(
             req.params.id
         );
-        
-        if(!deletedBook){
+
+        if (!deletedBook) {
             res.status(404).json({
-                message: "Book with id "+req.params.id+" not found"
+                message: "Book with id " + req.params.id + " not found"
             })
-        }else{
+        } else {
             res.status(200).json({
-                message: "Book with id "+req.params.id+" deleted successfully",
+                message: "Book with id " + req.params.id + " deleted successfully",
                 body: deletedBook
             })
         }
 
     } catch (error) {
         res.status(500).json({
-            message: "Error deleting book with id "+req.params.id
+            message: "Error deleting book with id " + req.params.id
         })
     }
 })
